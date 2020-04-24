@@ -2,6 +2,7 @@
 import os
 import sys
 
+
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "LaborLance.settings")
     try:
@@ -19,4 +20,19 @@ if __name__ == "__main__":
                 "forget to activate a virtual environment?"
             )
         raise
-    execute_from_command_line(sys.argv)
+
+
+        # os.environ.setdefault("DJANGO_SETTINGS_MODULE", "LaborLance.settings")
+
+
+
+
+
+    if sys.argv[1] == 'initial_script':
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "LaborLance.settings")
+        import django
+        django.setup()
+        from LaborLance.InitialMigrations import initial_script
+        initial_script.run()
+    else:
+        execute_from_command_line(sys.argv)

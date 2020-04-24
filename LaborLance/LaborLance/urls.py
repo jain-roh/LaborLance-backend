@@ -15,11 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from LaborLance import User
+from LaborLance import UserRegister
 from django.conf.urls import include
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^register/', include('LaborLance.User.urls')),
+    url(r'^register/', include('LaborLance.UserRegister.urls')),
 ]

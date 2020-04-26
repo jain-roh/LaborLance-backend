@@ -1,11 +1,11 @@
 from rest_framework import generics
 from django.contrib.auth.models import User
-from LaborLance.UserRegister.serializer import UserSerializer,JobSeekerSerializer
+from LaborLance.UserRegister.serializer import UserSerializer,JobSeekerSerializer,BusinessSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from.models import JobSeeker
+from.models import JobSeeker,Business
 from rest_framework import status
 from rest_framework.response import Response
 from django.views import generic
@@ -34,11 +34,17 @@ class UserRegisterView(APIView):
         if serializer.is_valid():
             print(serializer.data)
             # UserRegister.objects.create_user(username==serializer.data)
-            User.objects.create_user(username=serializer.data['username'],password=serializer.data['password'],email=serializer.data['email'],is_staff=serializer.data['is_staff'])
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            user_data=User.objects.create_user(username=serializer.data['username'],password=serializer.data['password'],email=serializer.data['email'],is_staff=serializer.data['is_staff'])
+            user_data={'id':user_data.id,'username':user_data.username,'email':user_data.email,'is_staff':user_data.is_staff}
+            return Response(user_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class JobSeekerRegisterDetailView(APIView):
+    def get(self, request,pk):
+        j = JobSeeker.objects.get(id=pk)
+        data = JobSeekerSerializer(j)
+        return Response(data.data, status=status.HTTP_200_OK)
 class JobSeekerRegisterView(APIView):
     serializer_class = JobSeekerSerializer
     queryset = JobSeeker.objects.all()
@@ -51,36 +57,35 @@ class JobSeekerRegisterView(APIView):
 
     def post(self, request):
         serializer = JobSeekerSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid(raise_exception=True):
+            # self.perform_create(serializer)
+            # headers = self.get_success_headers(serializer.data)
+            # serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED,headers=headers)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class JobSeekerRegisterDetailView(APIView):
+class BusinessRegisterDetailView(APIView):
     def get(self, request,pk):
-        jobseeker=JobSeeker.objects.get(id=pk)
-        data=JobSeekerSerializer(jobseeker)
+        b=Business.objects.get(id=pk)
+        data=BusinessSerializer(b)
         return Response(data.data,status=status.HTTP_200_OK)
 
-
-class BusinessRegisterView(APIView):
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
+class BusinessRegisterView(generics.ListCreateAPIView):
+    serializer_class = BusinessSerializer
+    queryset = Business.objects.all()
 
     def get(self, request):
-        # user = User.objects.get(id=pk)
-        # data = UserSerializer.serialize(user)
-        # return Response(data.data, status=status.HTTP_200_OK)
-        user = User.objects.all()
-        data = UserSerializer(user, many=True)
+        b = Business.objects.all()
+        data = BusinessSerializer(b, many=True)
         return Response(data.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = BusinessSerializer(data=request.data)
         if serializer.is_valid():
-            print(serializer.data)
+            serializer.save()
+
             # UserRegister.objects.create_user(username==serializer.data)
-            User.objects.create_user(username=serializer.data['username'],password=serializer.data['password'],email=serializer.data['email'],is_staff=serializer.data['is_staff'])
+            # User.objects.create_user(username=serializer.data['username'],password=serializer.data['password'],email=serializer.data['email'],is_staff=serializer.data['is_staff'])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

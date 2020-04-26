@@ -3,6 +3,8 @@ import re
 from django.contrib.auth.models import User
 from LaborLance.InitialMigrations.models import CityState
 from django.core.validators import MaxValueValidator, MinValueValidator
+from .models import Business,JobSeeker
+
 
 class UserSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
@@ -26,9 +28,10 @@ class UserSerializer(serializers.Serializer):
 
 
 class JobSeekerSerializer(serializers.Serializer):
-    user=serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    id=serializers.ReadOnlyField()
+    user_id=serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     name = serializers.CharField(max_length=200, allow_null=False)
-    locations = serializers.PrimaryKeyRelatedField(queryset=CityState.objects.all())
+    locations = UserSerializer(many=True)
     skills = serializers.CharField(max_length=500)
     notify = serializers.BooleanField(allow_null=False)
     minpay = serializers.FloatField(validators=[MinValueValidator(0.99)])
@@ -37,7 +40,25 @@ class JobSeekerSerializer(serializers.Serializer):
                ('monthly', 'Monthly')]
 
     class Meta:
-        model = User
+        model = JobSeeker
         fields = '__all__'
+
+
+
+class BusinessSerializer(serializers.Serializer):
+    id = serializers.ReadOnlyField()
+    user_id=serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    name = serializers.CharField(max_length=200, allow_null=False)
+    locations = serializers.PrimaryKeyRelatedField(queryset=CityState.objects.all())
+    notify = serializers.BooleanField(allow_null=False)
+    contactname = serializers.CharField(max_length=200, allow_null=False)
+    employee_strength = serializers.IntegerField()
+    industry_type = serializers.CharField(max_length=200)
+
+    class Meta:
+        model = Business
+        fields = '__all__'
+    def create(self, validated_data):
+        return Business.objects.create(**validated_data)
 
 

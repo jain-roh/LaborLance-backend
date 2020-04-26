@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'LaborLance',
     'LaborLance.InitialMigrations',
     'LaborLance.UserRegister',
-
+    'LaborLance.master',
 
 ]
 

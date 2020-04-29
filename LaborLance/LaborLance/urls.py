@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^register/', include('LaborLance.UserRegister.urls')),
     url(r'^master/', include('LaborLance.master.urls')),
+url(r'^jobpost/', include('LaborLance.JobPosting.urls')),
 ]

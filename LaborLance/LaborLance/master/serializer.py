@@ -8,11 +8,11 @@ from LaborLance.InitialMigrations.models import CityState
 
 class CityStateSerializer(serializers.Serializer):
     id=serializers.ReadOnlyField()
-    city = serializers.CharField(max_length=200)
-    state = serializers.CharField(max_length=200)
-    population = serializers.CharField(max_length=200)
-    type = serializers.CharField(max_length=100)
-    pop_class = serializers.CharField(max_length=100)
+    # city = serializers.CharField(max_length=200)
+    # state = serializers.CharField(max_length=200)
+    # population = serializers.CharField(max_length=200)
+    # type = serializers.CharField(max_length=100)
+    # pop_class = serializers.CharField(max_length=100)
     class Meta:
         model = CityState
         fields = '__all__'

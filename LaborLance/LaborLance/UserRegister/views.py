@@ -19,7 +19,7 @@ class UserRegisterDetailView(APIView):
 
 class UserRegisterView(APIView):
     serializer_class = UserSerializer
-    queryset = User.objects.all()
+    queryset = UserSerializer(User.objects.all(),many=True)
 
     def get(self, request):
         # user = User.objects.get(id=pk)
@@ -56,13 +56,20 @@ class JobSeekerRegisterView(APIView):
 
 
     def post(self, request):
-        serializer = JobSeekerSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            # self.perform_create(serializer)
-            # headers = self.get_success_headers(serializer.data)
-            # serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED,headers=headers)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = JobSeekerSerializer(data=request.data)
+
+            if serializer.is_valid(raise_exception=True):
+                # self.perform_create(serializer)
+                # headers = self.get_success_headers(serializer.data)
+                # print(serializer.data)
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print('View Error',e)
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
 
 class BusinessRegisterDetailView(APIView):
     def get(self, request,pk):

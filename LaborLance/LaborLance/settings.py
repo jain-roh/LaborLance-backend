@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'LaborLance.InitialMigrations',
     'LaborLance.UserRegister',
     'LaborLance.master',
+    'LaborLance.JobPosting',
 
 ]
 

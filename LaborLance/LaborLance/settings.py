@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'LaborLance.UserRegister',
     'LaborLance.master',
     'LaborLance.JobPosting',
+    'corsheaders',
 
 ]
 
@@ -53,6 +54,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 
@@ -64,6 +67,8 @@ REST_FRAMEWORK = {
 }
 
 ROOT_URLCONF = 'LaborLance.urls'
+
+CORS_ORIGIN_ALLOW_ALL=True
 
 TEMPLATES = [
     {

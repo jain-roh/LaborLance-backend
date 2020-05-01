@@ -3,3 +3,4 @@ django-cors-headers==3.0.2
 django-restframework==0.0.1
 djangorestframework==3.9.4
 pytz==2019.3
+PyJwt==1.7.1

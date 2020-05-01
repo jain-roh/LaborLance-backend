@@ -15,6 +15,7 @@ class UserRegisterDetailView(APIView):
     def get(self, request,pk):
         user = User.objects.get(id=pk)
         data = UserSerializer(user)
+
         return Response(data.data, status=status.HTTP_200_OK)
 
 class UserRegisterView(APIView):
@@ -22,9 +23,6 @@ class UserRegisterView(APIView):
     queryset = UserSerializer(User.objects.all(),many=True)
 
     def get(self, request):
-        # user = User.objects.get(id=pk)
-        # data = UserSerializer.serialize(user)
-        # return Response(data.data, status=status.HTTP_200_OK)
         user = User.objects.all()
         data = UserSerializer(user, many=True)
         return Response(data.data, status=status.HTTP_200_OK)
@@ -45,6 +43,8 @@ class JobSeekerRegisterDetailView(APIView):
         j = JobSeeker.objects.get(id=pk)
         data = JobSeekerSerializer(j)
         return Response(data.data, status=status.HTTP_200_OK)
+
+
 class JobSeekerRegisterView(APIView):
     serializer_class = JobSeekerSerializer
     queryset = JobSeeker.objects.all()
@@ -60,10 +60,8 @@ class JobSeekerRegisterView(APIView):
             serializer = JobSeekerSerializer(data=request.data)
 
             if serializer.is_valid(raise_exception=True):
-                # self.perform_create(serializer)
-                # headers = self.get_success_headers(serializer.data)
-                # print(serializer.data)
                 serializer.save()
+                print('Data',serializer.data.pop('password'))
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:

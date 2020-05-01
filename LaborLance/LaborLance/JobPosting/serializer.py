@@ -3,8 +3,8 @@ import re
 from django.contrib.auth.models import User
 from LaborLance.InitialMigrations.models import CityState
 from django.core.validators import MaxValueValidator, MinValueValidator
-from LaborLance.UserRegister.models import Business
-from .models import JobPost
+from LaborLance.UserRegister.models import Business,JobSeeker
+from .models import JobPost,JobPostImages,JobBid
 from LaborLance.master.serializer import CityStateSerializer
 
 
@@ -17,6 +17,7 @@ class JobPostSerializer(serializers.Serializer):
     details = serializers.CharField(max_length=1000, allow_null=False)
     skills = serializers.CharField(max_length=200, )
     notify = serializers.BooleanField(allow_null=False)
+    awarded_to = serializers.PrimaryKeyRelatedField(required=False,read_only=True)
 
     pay = serializers.FloatField(validators=[MinValueValidator(0.99)], default=0.99)
     CHOICES = [('hourly', 'Hourly'),
@@ -25,15 +26,30 @@ class JobPostSerializer(serializers.Serializer):
         choices=CHOICES,
         default='hourly')
     is_active = serializers.BooleanField(default=True)
+    # datafile=serializers.FileField()
     class Meta:
         model = JobPost
         fields = '__all__'
+
 
     def create(self, validated_data):
         # user = User.objects.get(pk=self.data['user_id'])
         return JobPost.objects.create(**validated_data)
 
+class JobPostImageSerializer(serializers.Serializer):
+    id = serializers.ReadOnlyField()
+    post_id = serializers.PrimaryKeyRelatedField(queryset=JobPost.objects.all())
+    files=serializers.FileField()
+    is_active = serializers.BooleanField(default=True)
 
+    # datafile=serializers.FileField()
+    class Meta:
+        model = JobPostImages
+        fields = '__all__'
+
+    def create(self, validated_data):
+        # user = User.objects.get(pk=self.data['user_id'])
+        return JobPostImages.objects.create(**validated_data)
 
     # def save(self):
     # #     # if not commit:
@@ -60,21 +76,25 @@ class JobPostSerializer(serializers.Serializer):
 # "minpay":25,
 # "maxpay":26
 # }
-#
-# class BusinessSerializer(UserSerializer):
-#     id = serializers.ReadOnlyField()
-#     # user_id=serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-#     name = serializers.CharField(max_length=200, allow_null=False)
-#     locations = serializers.PrimaryKeyRelatedField(queryset=CityState.objects.all())
-#     notify = serializers.BooleanField(allow_null=False)
-#     contactname = serializers.CharField(max_length=200, allow_null=False)
-#     employee_strength = serializers.IntegerField()
-#     industry_type = serializers.CharField(max_length=200)
-#
-#     class Meta:
-#         model = Business
-#         fields = '__all__'
-#     def create(self, validated_data):
-#         return Business.objects.create(**validated_data)
-#
+class JobBidSerializer(serializers.Serializer):
+    id=serializers.ReadOnlyField()
+    jobseeker_id = serializers.PrimaryKeyRelatedField(queryset=JobSeeker.objects.all())
+    post_id = serializers.PrimaryKeyRelatedField(queryset=JobPost.objects.all())
+    head = serializers.CharField(max_length=250, allow_null=False)
+    details = serializers.CharField(max_length=1000, allow_null=False)
+    pay = serializers.FloatField(validators=[MinValueValidator(0.99)], default=0.99)
+    # datafile = models.FileField(blank=False, null=False)
+    CHOICES = [('hourly', 'Hourly'),
+               ('monthly', 'Monthly')]
+    paytype = serializers.ChoiceField(
+        choices=CHOICES,
+        default='hourly')
+    is_active = serializers.BooleanField(default=True)
+    # datafile=serializers.FileField()
+    class Meta:
+        model = JobBid
+        fields = '__all__'
 
+    def create(self, validated_data):
+        # user = User.objects.get(pk=self.data['user_id'])
+        return JobBid.objects.create(**validated_data)

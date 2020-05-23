@@ -1,7 +1,7 @@
 from rest_framework import serializers
 import re
 from django.contrib.auth.models import User
-from LaborLance.InitialMigrations.models import CityState
+from LaborLance.InitialMigrations.models import CityState,Skill
 from django.core.validators import MaxValueValidator, MinValueValidator
 from .models import Business,JobSeeker
 from LaborLance.master.serializer import CityStateSerializer
@@ -32,7 +32,7 @@ class JobSeekerSerializer(UserSerializer):
     # user_id=serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     name = serializers.CharField(max_length=200, allow_null=False)
     locations = serializers.PrimaryKeyRelatedField(many=True, allow_null=False,allow_empty=False,read_only=False, queryset=CityState.objects.all(), source='location')
-    skills = serializers.CharField(max_length=500)
+    skills = serializers.PrimaryKeyRelatedField(many=True, allow_null=False,allow_empty=False,read_only=False, queryset=Skill.objects.all(), source='skill')
     notify = serializers.BooleanField(allow_null=False)
     minpay = serializers.FloatField(validators=[MinValueValidator(0.99)])
     maxpay = serializers.FloatField(validators=[MinValueValidator(0.99)])
@@ -53,14 +53,18 @@ class JobSeekerSerializer(UserSerializer):
         location = validated_data.pop('location')
         pwd=validated_data.pop('password')
         validated_data['is_staff']=True
+        skills=validated_data.data.pop('skill')
         js = JobSeeker.objects.create(**validated_data)
         try:
             js.set_password(pwd)
             js.save()
             for obj in list(location):
-                print(obj)
                 js.location.add(obj)
                 js.save()
+            for obj in list(skills):
+                js.skills.add(obj)
+                js.save()
+
         except Exception as e:
             js.delete()
 
@@ -110,6 +114,14 @@ class BusinessSerializer(UserSerializer):
         fields = '__all__'
         read_only_fields = ('is_active', 'is_staff')
     def create(self, validated_data):
-        return Business.objects.create(**validated_data)
+        pwd = validated_data.pop('password')
+        validated_data['is_staff'] = False
+        bs=Business.objects.create(**validated_data)
+        try:
+            bs.set_password(pwd)
+            bs.save()
+        except Exception as e:
+            bs.delete()
+        return bs
 
 

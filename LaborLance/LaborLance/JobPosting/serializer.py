@@ -1,7 +1,7 @@
 from rest_framework import serializers
 import re
 from django.contrib.auth.models import User
-from LaborLance.InitialMigrations.models import CityState
+from LaborLance.InitialMigrations.models import CityState,Skill
 from django.core.validators import MaxValueValidator, MinValueValidator
 from LaborLance.UserRegister.models import Business,JobSeeker
 from .models import JobPost,JobPostImages,JobBid
@@ -15,7 +15,7 @@ class JobPostSerializer(serializers.Serializer):
     business_id=serializers.PrimaryKeyRelatedField(queryset=Business.objects.all())
     head = serializers.CharField(max_length=250, allow_null=False)
     details = serializers.CharField(max_length=1000, allow_null=False)
-    skills = serializers.CharField(max_length=200, )
+    skills = serializers.PrimaryKeyRelatedField(many=True, allow_null=False,allow_empty=False,read_only=False, queryset=Skill.objects.all(), source='skill')
     notify = serializers.BooleanField(allow_null=False)
     awarded_to = serializers.PrimaryKeyRelatedField(required=False,read_only=True)
 

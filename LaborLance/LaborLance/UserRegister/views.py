@@ -57,6 +57,7 @@ class JobSeekerRegisterView(APIView):
 
     def post(self, request):
         try:
+            print(request.data)
             serializer = JobSeekerSerializer(data=request.data)
 
             if serializer.is_valid(raise_exception=True):
@@ -85,12 +86,10 @@ class BusinessRegisterView(generics.ListCreateAPIView):
         return Response(data.data, status=status.HTTP_200_OK)
 
     def post(self, request):
+        print(request.data)
         serializer = BusinessSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
-
-            # UserRegister.objects.create_user(username==serializer.data)
-            # User.objects.create_user(username=serializer.data['username'],password=serializer.data['password'],email=serializer.data['email'],is_staff=serializer.data['is_staff'])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

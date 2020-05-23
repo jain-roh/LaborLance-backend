@@ -1,5 +1,5 @@
 from django.db import models
-from LaborLance.InitialMigrations.models import CityState
+from LaborLance.InitialMigrations.models import CityState,Skill
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -7,7 +7,7 @@ class JobSeeker(User):
    # user_id=models.ForeignKey(User,related_name='jobseeker_user_id')
    name = models.CharField(max_length=200,null=True)
    location = models.ManyToManyField(CityState)
-   skills = models.CharField(max_length=500,null=True)
+   skills = models.ManyToManyField(Skill)
    notify = models.BooleanField(null=False)
    minpay=models.FloatField(validators=[MinValueValidator(0.99)],default=0.99)
    maxpay=models.FloatField(validators=[MinValueValidator(0.99)],default=0.99)

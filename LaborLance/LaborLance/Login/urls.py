@@ -1,10 +1,7 @@
 
 from django.conf.urls import url
 from django.contrib import admin
-from .views import UserRegisterView,JobSeekerRegisterView,UserRegisterDetailView,JobSeekerRegisterDetailView,BusinessRegisterDetailView,BusinessRegisterView
+from .views import UserLoginDetailView
 urlpatterns = [
-    url(r'login/$', UserRegisterView.as_view()),
-
-
-
+    url(r'', UserLoginDetailView.as_view()),
 ]
